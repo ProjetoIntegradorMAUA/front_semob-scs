@@ -82,7 +82,7 @@ class _SideNavbarState extends State<SideNavbar> {
           child: Text(
             title,
             style: TextStyle(
-              color: ativo ? Colors.white : Colors.white.withOpacity(0.75),
+              color: ativo ? Colors.white : Colors.white.withValues(alpha: 0.75),
               fontSize: 15,
               fontWeight: ativo ? FontWeight.bold : FontWeight.normal,
             ),
