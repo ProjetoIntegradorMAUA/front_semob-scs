@@ -53,7 +53,7 @@ class SectionCard extends StatelessWidget {
   }
 }
 
-/// Card de indicador (ícone colorido + valor + rótulo).
+
 class KpiCard extends StatelessWidget {
   final IconData icon;
   final Color color;
@@ -77,7 +77,7 @@ class KpiCard extends StatelessWidget {
           width: 44,
           height: 44,
           decoration: BoxDecoration(
-            color: color.withOpacity(0.12),
+            color: color.withValues(alpha: 0.1),
             borderRadius: BorderRadius.circular(10),
           ),
           child: Icon(icon, color: color),

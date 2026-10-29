@@ -43,7 +43,7 @@ class _IndicadoresFinanceirosPageState extends State<IndicadoresFinanceirosPage>
               SizedBox(
                 width: 200,
                 child: DropdownButtonFormField<String>(
-                  value: _mes,
+                  initialValue: _mes,
                   decoration: const InputDecoration(
                       labelText: 'Período',
                       border: OutlineInputBorder(),

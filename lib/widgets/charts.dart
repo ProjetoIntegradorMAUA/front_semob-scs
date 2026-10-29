@@ -110,7 +110,7 @@ class LineChartCard extends StatelessWidget {
                   barWidth: 3,
                   dotData: const FlDotData(show: false),
                   belowBarData:
-                      BarAreaData(show: true, color: s.color.withOpacity(0.07)),
+                      BarAreaData(show: true, color: s.color.withValues(alpha: 0.1)),
                 ),
             ],
           )),
