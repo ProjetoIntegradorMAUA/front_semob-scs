@@ -1,14 +1,16 @@
 import 'package:flutter/material.dart';
 
 class SideNavbar extends StatefulWidget {
-  const SideNavbar({super.key});
+  final ValueChanged<int>? onSelecionar; // avisa a tela qual página foi clicada
+  final int indiceInicial;
+  const SideNavbar({super.key, this.onSelecionar, this.indiceInicial = 0});
 
   @override
   State<SideNavbar> createState() => _SideNavbarState();
 }
 
 class _SideNavbarState extends State<SideNavbar> {
-  int _indiceAtivo = 0;
+  late int _indiceAtivo = widget.indiceInicial;
 
   @override
   Widget build(BuildContext context) {
@@ -75,6 +77,7 @@ class _SideNavbarState extends State<SideNavbar> {
           setState(() {
             _indiceAtivo = numeroDaPagina;
           });
+          widget.onSelecionar?.call(numeroDaPagina);
         },
         borderRadius: BorderRadius.circular(12),
         child: Padding(
