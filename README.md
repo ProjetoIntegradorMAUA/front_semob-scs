@@ -1,16 +1,35 @@
 # front_semob-scs
-A new Flutter project.
+Front-end Flutter do SEMOB-SCS (dashboards de transporte municipal).
 
-## Getting Started
+## Como rodar
 
-This project is a starting point for a Flutter application.
+```bash
+flutter pub get
+flutter run -d chrome
+```
 
-A few resources to get you started if this is your first Flutter project:
+## Estrutura da lib
 
-- [Learn Flutter](https://docs.flutter.dev/get-started/learn-flutter)
-- [Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Flutter learning resources](https://docs.flutter.dev/reference/learning-resources)
+```
+lib/
+ ├─ main.dart                       app + troca de páginas pela navbar
+ ├─ models/
+ │   ├─ linha_resumo.dart           linha, km e viagens
+ │   └─ faixa_fcv.dart              faixa horária: programadas x realizadas
+ ├─ services/
+ │   ├─ mock_data.dart              dados de exemplo (Dashboard e Frota)
+ │   ├─ mock_dados_mes.dart         dados de agosto/2026 (Passageiros e Financeiro)
+ │   └─ formatadores.dart           formatação pt-BR e somas por semana
+ ├─ widgets/
+ │   ├─ navbar.dart                 menu lateral (SideNavbar)
+ │   ├─ app_theme.dart              cores e tema
+ │   ├─ common.dart                 cards, KPIs e grades responsivas
+ │   └─ charts.dart                 gráficos (linha, barras, rosca)
+ └─ pages/
+     ├─ dashboard_geral.dart
+     ├─ operacao_frota.dart
+     ├─ analise_passageiros.dart
+     └─ indicadores_financeiros.dart
+```
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+Dependência dos gráficos: `fl_chart`.

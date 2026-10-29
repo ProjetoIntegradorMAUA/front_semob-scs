@@ -1,5 +1,10 @@
 import 'package:flutter/material.dart';
-import 'src/components/navbar.dart'; 
+import 'pages/analise_passageiros.dart';
+import 'pages/dashboard_geral.dart';
+import 'pages/indicadores_financeiros.dart';
+import 'pages/operacao_frota.dart';
+import 'widgets/app_theme.dart';
+import 'widgets/navbar.dart';
 
 void main() {
   runApp(const MyApp());
@@ -10,14 +15,77 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
+    return MaterialApp(
+      title: 'SEMOB-SCS',
       debugShowCheckedModeBanner: false,
-      home: Scaffold(
-        body: Align(
-          alignment: Alignment.centerLeft,
-          child: SideNavbar(),
+      theme: buildTheme(),
+      home: const HomeShell(),
+    );
+  }
+}
+
+/// Junta a SideNavbar com a página escolhida.
+class HomeShell extends StatefulWidget {
+  const HomeShell({super.key});
+
+  @override
+  State<HomeShell> createState() => _HomeShellState();
+}
+
+class _HomeShellState extends State<HomeShell> {
+  int _pagina = 0;
+
+  // Índices iguais aos do navbar.dart
+  Widget _conteudo() {
+    switch (_pagina) {
+      case 0:
+        return const DashboardGeralPage();
+      case 1:
+        return const OperacaoFrotaPage();
+      case 2:
+        return const AnalisePassageirosPage();
+      case 3:
+        return const IndicadoresFinanceirosPage();
+      default:
+        return const Center(child: Text('Em construção'));
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final desktop = MediaQuery.sizeOf(context).width >= 900;
+
+    if (desktop) {
+      return Scaffold(
+        body: Row(
+          children: [
+            SideNavbar(
+              indiceInicial: _pagina,
+              onSelecionar: (i) => setState(() => _pagina = i),
+            ),
+            Expanded(child: _conteudo()),
+          ],
+        ),
+      );
+    }
+
+    // Mobile: navbar vira menu lateral (hambúrguer)
+    return Scaffold(
+      appBar: AppBar(
+        backgroundColor: const Color(0xFF004B93),
+        foregroundColor: Colors.white,
+        title: const Text('SEMOB-SCS'),
+      ),
+      drawer: Drawer(
+        child: SideNavbar(
+          indiceInicial: _pagina,
+          onSelecionar: (i) {
+            Navigator.pop(context);
+            setState(() => _pagina = i);
+          },
         ),
       ),
+      body: _conteudo(),
     );
   }
 }
