@@ -1,3 +1,5 @@
+/// Funções de formatação (padrão brasileiro) e agregações simples.
+
 /// 1050248 -> "1.050.248"
 String fmtInt(num n) => n
     .round()
@@ -26,3 +28,12 @@ List<int> diasPorSemana(int n) =>
 /// 12.34 -> "+12,3%"
 String fmtVar(double p) =>
     '${p >= 0 ? '+' : ''}${p.toStringAsFixed(1).replaceAll('.', ',')}%';
+
+String _doisDigitos(int n) => n.toString().padLeft(2, '0');
+
+/// 2026-08-02 -> "02/08"
+String fmtDiaMes(DateTime d) => '${_doisDigitos(d.day)}/${_doisDigitos(d.month)}';
+
+/// -> "28/10/2026 14:05"
+String fmtDataHora(DateTime d) =>
+    '${_doisDigitos(d.day)}/${_doisDigitos(d.month)}/${d.year} ${_doisDigitos(d.hour)}:${_doisDigitos(d.minute)}';

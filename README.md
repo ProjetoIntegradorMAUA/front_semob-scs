@@ -15,9 +15,14 @@ lib/
  ├─ main.dart                       app + troca de páginas pela navbar
  ├─ models/
  │   ├─ linha_resumo.dart           linha, km e viagens
- │   └─ faixa_fcv.dart              faixa horária: programadas x realizadas
+ │   ├─ faixa_fcv.dart              faixa horária: programadas x realizadas
+ │   ├─ alerta.dart                 ocorrência (gravidade e status)
+ │   └─ relatorio.dart              relatório e tipos de relatório
  ├─ services/
  │   ├─ mock_data.dart              dados de exemplo (Dashboard e Frota)
+ │   ├─ mock_alertas.dart           dados brutos dos alertas
+ │   ├─ alertas_service.dart        regras que geram as ocorrências
+ │   ├─ mock_relatorios.dart        tipos e relatórios de exemplo
  │   ├─ mock_dados_mes.dart         dados de agosto/2026 (Passageiros e Financeiro)
  │   └─ formatadores.dart           formatação pt-BR e somas por semana
  ├─ widgets/
@@ -29,7 +34,10 @@ lib/
      ├─ dashboard_geral.dart
      ├─ operacao_frota.dart
      ├─ analise_passageiros.dart
-     └─ indicadores_financeiros.dart
+     ├─ indicadores_financeiros.dart
+     ├─ alertas_operacionais.dart
+     ├─ relatorios_gerenciais.dart
+     └─ configuracoes.dart
 ```
 
 Dependência dos gráficos: `fl_chart`.

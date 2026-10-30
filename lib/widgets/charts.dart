@@ -18,7 +18,7 @@ FlTitlesData _titles(List<String> labels) => FlTitlesData(
       leftTitles: AxisTitles(
         sideTitles: SideTitles(
           showTitles: true,
-          reservedSize: 48,
+          reservedSize: 56,
           getTitlesWidget: (v, _) => Text(fmtInt(v), style: _axisStyle),
         ),
       ),
@@ -110,7 +110,7 @@ class LineChartCard extends StatelessWidget {
                   barWidth: 3,
                   dotData: const FlDotData(show: false),
                   belowBarData:
-                      BarAreaData(show: true, color: s.color.withValues(alpha: 0.1)),
+                      BarAreaData(show: true, color: s.color.withValues(alpha: 0.07)),
                 ),
             ],
           )),
