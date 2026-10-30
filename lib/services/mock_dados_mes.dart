@@ -14,6 +14,12 @@ class MockPassageiros {
 }
 
 class MockFinanceiro {
+  /// Vendas totais por mês: Julho e Agosto completos; Setembro = 1ª quinzena (01–14).
+  /// Fontes: Julho/Mensal/Saldos.html, Agosto/Mensal/Saldos_Mensal.html,
+  /// Setembro/Quinzenal/Saldos_Quinzenal.html.
+  static const mesesLabels = ['Jul', 'Ago', 'Set (1–14)'];
+  static const vendasMensais = <double>[553425.63, 668605.71, 90558.34];
+
   static const vendasPorDia = <double>[0.0, 0.0, 11692.0, 12720.0, 18271.0, 11450.0, 4851.0, 0.0, 0.0, 12607.68, 11100.0, 9880.0, 4384.86, 4900.0, 0.0, 0.0, 61092.0, 34170.0, 22050.0, 14480.0, 11084.0, 0.0, 0.0, 50630.0, 138950.0, 75650.0, 100000.0, 35595.0, 0.0, 0.0, 23048.17];
   static const utilizacaoPorDia = <double>[3380.0, 1980.0, 8610.0, 9055.0, 9465.0, 10430.0, 10430.0, 5100.0, 2580.0, 11285.0, 12120.0, 12355.0, 12675.0, 12505.0, 5600.0, 3165.0, 12650.0, 13135.0, 13215.0, 13565.0, 12890.0, 6255.0, 3415.0, 13215.0, 13700.0, 13580.0, 13760.0, 14180.0, 7305.0, 4015.0, 14125.0];
 }

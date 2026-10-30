@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
+import 'pages/alertas_operacionais.dart';
 import 'pages/analise_passageiros.dart';
+import 'pages/configuracoes.dart';
 import 'pages/dashboard_geral.dart';
 import 'pages/indicadores_financeiros.dart';
 import 'pages/operacao_frota.dart';
+import 'pages/relatorios_gerenciais.dart';
 import 'widgets/app_theme.dart';
 import 'widgets/navbar.dart';
 
@@ -46,8 +49,14 @@ class _HomeShellState extends State<HomeShell> {
         return const AnalisePassageirosPage();
       case 3:
         return const IndicadoresFinanceirosPage();
+      case 4:
+        return const AlertasOperacionaisPage();
+      case 5:
+        return const RelatoriosGerenciaisPage();
+      case 6:
+        return const ConfiguracoesPage();
       default:
-        return const Center(child: Text('Em construção'));
+        return const DashboardGeralPage();
     }
   }
 

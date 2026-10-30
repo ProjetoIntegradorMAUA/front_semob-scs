@@ -53,18 +53,22 @@ class SectionCard extends StatelessWidget {
   }
 }
 
-
+/// Card de indicador (ícone colorido + valor + rótulo).
 class KpiCard extends StatelessWidget {
   final IconData icon;
   final Color color;
   final String value;
   final String label;
+  final String? hint; // linha pequena abaixo do rótulo (ex.: "+11,2% vs período")
+  final Color? hintColor;
   const KpiCard({
     super.key,
     required this.icon,
     required this.color,
     required this.value,
     required this.label,
+    this.hint,
+    this.hintColor,
   });
 
   @override
@@ -77,7 +81,7 @@ class KpiCard extends StatelessWidget {
           width: 44,
           height: 44,
           decoration: BoxDecoration(
-            color: color.withValues(alpha: 0.1),
+            color: color.withValues(alpha: 0.12),
             borderRadius: BorderRadius.circular(10),
           ),
           child: Icon(icon, color: color),
@@ -97,6 +101,17 @@ class KpiCard extends StatelessWidget {
                 maxLines: 2,
                 overflow: TextOverflow.ellipsis,
                 style: const TextStyle(fontSize: 12, color: AppColors.muted)),
+            if (hint != null)
+              Padding(
+                padding: const EdgeInsets.only(top: 2),
+                child: Text(hint!,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: TextStyle(
+                        fontSize: 11,
+                        fontWeight: FontWeight.w600,
+                        color: hintColor ?? AppColors.muted)),
+              ),
           ]),
         ),
       ]),
@@ -124,34 +139,38 @@ class KpiGrid extends StatelessWidget {
   }
 }
 
-/// Duas colunas (2/3 + 1/3) no desktop; empilha no mobile.
-/// Com [sideFirst], a coluna estreita vem primeiro (esquerda / topo).
+/// Duas colunas no desktop (padrão 2/3 + 1/3); empilha no mobile.
+/// Com [sideFirst], a coluna [side] vem primeiro (esquerda / topo).
 class SplitRow extends StatelessWidget {
   final Widget main;
   final Widget side;
   final bool sideFirst;
+  final int mainFlex;
+  final int sideFlex;
   const SplitRow({
     super.key,
     required this.main,
     required this.side,
     this.sideFirst = false,
+    this.mainFlex = 2,
+    this.sideFlex = 1,
   });
 
   @override
   Widget build(BuildContext context) {
     return LayoutBuilder(builder: (context, c) {
+      final primeiro = sideFirst ? side : main;
+      final segundo = sideFirst ? main : side;
       if (c.maxWidth < 900) {
-        return Column(children: [
-          sideFirst ? side : main,
-          const SizedBox(height: 16),
-          sideFirst ? main : side,
-        ]);
+        return Column(children: [primeiro, const SizedBox(height: 16), segundo]);
       }
-      final a = Expanded(flex: sideFirst ? 1 : 2, child: sideFirst ? side : main);
-      final b = Expanded(flex: sideFirst ? 2 : 1, child: sideFirst ? main : side);
       return Row(
         crossAxisAlignment: CrossAxisAlignment.start,
-        children: [a, const SizedBox(width: 16), b],
+        children: [
+          Expanded(flex: sideFirst ? sideFlex : mainFlex, child: primeiro),
+          const SizedBox(width: 16),
+          Expanded(flex: sideFirst ? mainFlex : sideFlex, child: segundo),
+        ],
       );
     });
   }
