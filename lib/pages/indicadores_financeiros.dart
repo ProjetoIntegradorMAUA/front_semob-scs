@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import '../services/formatadores.dart';
-import '../widgets/app_theme.dart';
 import '../services/mock_data.dart';
 import '../services/mock_dados_mes.dart';
+import '../widgets/app_theme.dart';
 import '../widgets/charts.dart';
 import '../widgets/common.dart';
 
@@ -24,14 +24,19 @@ class _IndicadoresFinanceirosPageState extends State<IndicadoresFinanceirosPage>
     final totalUso = uso.fold<double>(0, (a, b) => a + b);
     final saldo = totalVendas - totalUso;
     final pctUso = totalUso / totalVendas * 100;
+    final mediaDia = totalVendas / vendas.length;
 
     final semVendas = porSemana(vendas);
-    final semUso = porSemana(uso);
-    final semLabels = [for (var i = 0; i < semVendas.length; i++) 'Sem ${i + 1}'];
+    final semPass = porSemana(MockPassageiros.total);
+    final semLabels = [
+      for (var i = 0; i < semVendas.length; i++) 'Sem ${i + 1}${i == 4 ? '*' : ''}'
+    ];
+    // Sem 4 x Sem 3 (a semana 5 tem só 3 dias, então não entra na comparação)
+    final varSemanal = semVendas[3] / semVendas[2] * 100 - 100;
 
     return PageScaffold(
       title: 'Indicadores Financeiros',
-      subtitle: 'Venda x utilização de créditos · Agosto de 2026',
+      subtitle: 'Acompanhamento de vendas e utilização de créditos · Agosto de 2026',
       children: [
         SectionCard(
           title: 'Filtro financeiro',
@@ -67,26 +72,34 @@ class _IndicadoresFinanceirosPageState extends State<IndicadoresFinanceirosPage>
               icon: Icons.sell_outlined,
               color: AppColors.teal,
               value: fmtMoney(totalVendas),
-              label: 'Total de vendas'),
+              label: 'Receita total (vendas)',
+              hint: '${fmtMoney(mediaDia)} por dia',
+              hintColor: AppColors.teal),
           KpiCard(
               icon: Icons.credit_card_outlined,
               color: AppColors.blue,
               value: fmtMoney(totalUso),
-              label: 'Créditos utilizados'),
+              label: 'Créditos utilizados',
+              hint: '${fmtPct(pctUso)} das vendas',
+              hintColor: AppColors.blue),
           KpiCard(
               icon: Icons.account_balance_wallet_outlined,
               color: saldo >= 0 ? AppColors.orange : AppColors.red,
               value: fmtMoney(saldo),
-              label: 'Crédito circulante (vendas − utilização)'),
+              label: 'Crédito circulante',
+              hint: '${fmtPct(100 - pctUso)} das vendas',
+              hintColor: saldo >= 0 ? AppColors.orange : AppColors.red),
           KpiCard(
-              icon: Icons.percent,
+              icon: Icons.trending_up,
               color: AppColors.green,
-              value: fmtPct(pctUso),
-              label: 'Utilização sobre as vendas'),
+              value: fmtVar(varSemanal),
+              label: 'Variação semanal das vendas',
+              hint: 'Sem 4 x Sem 3',
+              hintColor: varSemanal >= 0 ? AppColors.green : AppColors.red),
         ]),
         SplitRow(
           main: LineChartCard(
-            title: 'Vendas x utilização por dia (R\$)',
+            title: 'Evolução da receita: vendas x utilização por dia (R\$)',
             labels: MockPassageiros.dias,
             series: [
               LineSeries(vendas, AppColors.teal, 'Vendas'),
@@ -105,44 +118,21 @@ class _IndicadoresFinanceirosPageState extends State<IndicadoresFinanceirosPage>
           ),
         ),
         SplitRow(
-          main: GroupedBarChartCard(
-            title: 'Comparativo por semana (R\$)',
+          mainFlex: 1,
+          sideFlex: 1,
+          main: BarChartCard(
+            title: 'Comparativo de receita por mês (R\$)',
+            labels: MockFinanceiro.mesesLabels,
+            values: MockFinanceiro.vendasMensais,
+            color: AppColors.teal,
+          ),
+          side: GroupedBarChartCard(
+            title: 'Passageiros x receita por semana (em milhares) · * parcial',
             labels: semLabels,
             series: [
-              BarSeries('Vendas', semVendas, AppColors.teal),
-              BarSeries('Utilização', semUso, AppColors.blue),
+              BarSeries('Passageiros (mil)', [for (final v in semPass) v / 1000], AppColors.blue),
+              BarSeries('Receita (R\$ mil)', [for (final v in semVendas) v / 1000], AppColors.teal),
             ],
-          ),
-          side: SectionCard(
-            title: 'Resumo por semana',
-            child: SingleChildScrollView(
-              scrollDirection: Axis.horizontal,
-              child: DataTable(
-                headingRowHeight: 36,
-                columnSpacing: 20,
-                columns: const [
-                  DataColumn(label: Text('Semana')),
-                  DataColumn(label: Text('Vendas (R\$)'), numeric: true),
-                  DataColumn(label: Text('Uso (R\$)'), numeric: true),
-                  DataColumn(label: Text('Saldo (R\$)'), numeric: true),
-                ],
-                rows: [
-                  for (var i = 0; i < semVendas.length; i++)
-                    DataRow(cells: [
-                      DataCell(Text(semLabels[i])),
-                      DataCell(Text(fmtInt(semVendas[i]))),
-                      DataCell(Text(fmtInt(semUso[i]))),
-                      DataCell(Text(
-                        fmtInt(semVendas[i] - semUso[i]),
-                        style: TextStyle(
-                            color: semVendas[i] - semUso[i] < 0
-                                ? AppColors.red
-                                : null),
-                      )),
-                    ]),
-                ],
-              ),
-            ),
           ),
         ),
       ],
