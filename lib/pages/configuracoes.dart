@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../services/api_config.dart';
 import '../services/mock_data.dart';
 import '../widgets/app_theme.dart';
 import '../widgets/common.dart';
@@ -87,6 +88,8 @@ class _ConfiguracoesPageState extends State<ConfiguracoesPage> {
               _info('Versão', '0.1.0 (protótipo)'),
               _info('Dados', 'Julho a Setembro/2026'),
               _info('Fonte', 'Relatórios de utilização do transporte municipal'),
+              _info('Modo', ApiConfig.sourceLabel),
+              _info('API', ApiConfig.baseUrl),
             ]),
           ),
         ),
