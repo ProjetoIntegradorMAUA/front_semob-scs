@@ -49,6 +49,7 @@ class _ConfiguracoesPageState extends State<ConfiguracoesPage> {
                 width: 260,
                 child: DropdownButtonFormField<String>(
                   initialValue: _periodoPadrao,
+                  isExpanded: true,
                   decoration: const InputDecoration(
                       labelText: 'Período padrão',
                       border: OutlineInputBorder(),
@@ -63,19 +64,25 @@ class _ConfiguracoesPageState extends State<ConfiguracoesPage> {
                 ),
               ),
               const SizedBox(height: 8),
-              SwitchListTile(
-                contentPadding: EdgeInsets.zero,
-                title: const Text('Notificar alertas críticos'),
-                subtitle: const Text('Avisar quando surgir uma ocorrência crítica'),
-                value: _notificarCriticos,
-                onChanged: (v) => setState(() => _notificarCriticos = v),
+              Material(
+                color: Colors.transparent,
+                child: SwitchListTile(
+                  contentPadding: EdgeInsets.zero,
+                  title: const Text('Notificar alertas críticos'),
+                  subtitle: const Text('Avisar quando surgir uma ocorrência crítica'),
+                  value: _notificarCriticos,
+                  onChanged: (v) => setState(() => _notificarCriticos = v),
+                ),
               ),
-              SwitchListTile(
-                contentPadding: EdgeInsets.zero,
-                title: const Text('Resumo semanal por e-mail'),
-                subtitle: const Text('Receber o consolidado da semana'),
-                value: _resumoSemanal,
-                onChanged: (v) => setState(() => _resumoSemanal = v),
+              Material(
+                color: Colors.transparent,
+                child: SwitchListTile(
+                  contentPadding: EdgeInsets.zero,
+                  title: const Text('Resumo semanal por e-mail'),
+                  subtitle: const Text('Receber o consolidado da semana'),
+                  value: _resumoSemanal,
+                  onChanged: (v) => setState(() => _resumoSemanal = v),
+                ),
               ),
               const SizedBox(height: 8),
               FilledButton(onPressed: _salvar, child: const Text('Salvar preferências')),

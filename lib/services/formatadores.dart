@@ -1,4 +1,4 @@
-/// Funções de formatação (padrão brasileiro) e agregações simples.
+// Funções de formatação (padrão brasileiro) e agregações simples.
 
 /// 1050248 -> "1.050.248"
 String fmtInt(num n) => n

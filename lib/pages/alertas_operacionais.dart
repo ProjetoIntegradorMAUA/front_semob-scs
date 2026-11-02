@@ -98,8 +98,8 @@ class _AlertasOperacionaisPageState extends State<AlertasOperacionaisPage> {
                 scrollDirection: Axis.horizontal,
                 child: DataTable(
                   headingRowHeight: 36,
-                  dataRowMinHeight: 48,
-                  dataRowMaxHeight: 64,
+                  dataRowMinHeight: 64,
+                  dataRowMaxHeight: 84,
                   columnSpacing: 20,
                   columns: const [
                     DataColumn(label: Text('Data')),
@@ -116,6 +116,7 @@ class _AlertasOperacionaisPageState extends State<AlertasOperacionaisPage> {
                         DataCell(SizedBox(
                           width: 280,
                           child: Column(
+                            mainAxisSize: MainAxisSize.min,
                             mainAxisAlignment: MainAxisAlignment.center,
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
@@ -143,15 +144,19 @@ class _AlertasOperacionaisPageState extends State<AlertasOperacionaisPage> {
                 ),
               ),
               const SizedBox(height: 8),
-              Row(children: [
-                Text('Mostrando ${mostrados.length} de ${filtrados.length}',
-                    style: const TextStyle(fontSize: 11, color: AppColors.muted)),
-                const Spacer(),
-                if (mostrados.length < filtrados.length)
-                  TextButton(
-                      onPressed: () => setState(() => _visiveis += 10),
-                      child: const Text('Ver mais')),
-              ]),
+              Wrap(
+                alignment: WrapAlignment.spaceBetween,
+                crossAxisAlignment: WrapCrossAlignment.center,
+                spacing: 8,
+                children: [
+                  Text('Mostrando ${mostrados.length} de ${filtrados.length}',
+                      style: const TextStyle(fontSize: 11, color: AppColors.muted)),
+                  if (mostrados.length < filtrados.length)
+                    TextButton(
+                        onPressed: () => setState(() => _visiveis += 10),
+                        child: const Text('Ver mais')),
+                ],
+              ),
             ]),
           ),
           side: SectionCard(

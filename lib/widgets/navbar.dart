@@ -122,6 +122,7 @@ class _SideNavbarState extends State<SideNavbar> {
           borderRadius: BorderRadius.circular(10),
         ),
         child: InkWell(
+          key: ValueKey('nav-$numeroDaPagina'),
           onTap: () {
             setState(() => _indiceAtivo = numeroDaPagina);
             widget.onSelecionar?.call(numeroDaPagina);
