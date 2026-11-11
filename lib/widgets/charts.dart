@@ -4,22 +4,23 @@ import '../services/formatadores.dart';
 import 'app_theme.dart';
 import 'common.dart';
 
-const _axisStyle = TextStyle(fontSize: 11, color: AppColors.muted);
+TextStyle _axisStyle(BuildContext context) =>
+    TextStyle(fontSize: 11, color: context.cores.muted);
 
-FlGridData _grid() => FlGridData(
+FlGridData _grid(BuildContext context) => FlGridData(
       drawVerticalLine: false,
       getDrawingHorizontalLine: (_) =>
-          const FlLine(color: AppColors.border, strokeWidth: 1),
+          FlLine(color: context.cores.border, strokeWidth: 1),
     );
 
-FlTitlesData _titles(List<String> labels) => FlTitlesData(
+FlTitlesData _titles(BuildContext context, List<String> labels) => FlTitlesData(
       topTitles: const AxisTitles(),
       rightTitles: const AxisTitles(),
       leftTitles: AxisTitles(
         sideTitles: SideTitles(
           showTitles: true,
           reservedSize: 56,
-          getTitlesWidget: (v, _) => Text(fmtInt(v), style: _axisStyle),
+          getTitlesWidget: (v, _) => Text(fmtInt(v), style: _axisStyle(context)),
         ),
       ),
       bottomTitles: AxisTitles(
@@ -32,7 +33,7 @@ FlTitlesData _titles(List<String> labels) => FlTitlesData(
             if (i < 0 || i >= labels.length) return const SizedBox.shrink();
             return Padding(
               padding: const EdgeInsets.only(top: 6),
-              child: Text(labels[i], style: _axisStyle),
+              child: Text(labels[i], style: _axisStyle(context)),
             );
           },
         ),
@@ -54,7 +55,7 @@ class _Legend extends StatelessWidget {
               height: 10,
               decoration: BoxDecoration(color: cor, shape: BoxShape.circle)),
           const SizedBox(width: 6),
-          Text(nome, style: _axisStyle),
+          Text(nome, style: _axisStyle(context)),
         ]),
     ]);
   }
@@ -95,9 +96,9 @@ class LineChartCard extends StatelessWidget {
         SizedBox(
           height: 220,
           child: LineChart(LineChartData(
-            gridData: _grid(),
+            gridData: _grid(context),
             borderData: FlBorderData(show: false),
-            titlesData: _titles(labels),
+            titlesData: _titles(context, labels),
             lineBarsData: [
               for (final s in series)
                 LineChartBarData(
@@ -142,9 +143,9 @@ class BarChartCard extends StatelessWidget {
         height: 220,
         child: BarChart(BarChartData(
           alignment: BarChartAlignment.spaceAround,
-          gridData: _grid(),
+          gridData: _grid(context),
           borderData: FlBorderData(show: false),
-          titlesData: _titles(labels),
+          titlesData: _titles(context, labels),
           barGroups: [
             for (var i = 0; i < values.length; i++)
               BarChartGroupData(x: i, barRods: [
@@ -193,9 +194,9 @@ class GroupedBarChartCard extends StatelessWidget {
           height: 220,
           child: BarChart(BarChartData(
             alignment: BarChartAlignment.spaceAround,
-            gridData: _grid(),
+            gridData: _grid(context),
             borderData: FlBorderData(show: false),
-            titlesData: _titles(labels),
+            titlesData: _titles(context, labels),
             barGroups: [
               for (var i = 0; i < labels.length; i++)
                 BarChartGroupData(x: i, barsSpace: 4, barRods: [
@@ -261,7 +262,7 @@ class DonutChartCard extends StatelessWidget {
             Column(mainAxisSize: MainAxisSize.min, children: [
               Text(centerValue,
                   style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w700)),
-              Text(centerLabel, style: _axisStyle),
+              Text(centerLabel, style: _axisStyle(context)),
             ]),
           ]),
         ),
