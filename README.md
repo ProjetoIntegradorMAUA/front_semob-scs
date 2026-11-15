@@ -34,6 +34,8 @@ lib/
  ├─ services/
  │   ├─ mock_data.dart              dados de exemplo (Dashboard e Frota)
  │   ├─ mock_alertas.dart           dados brutos dos alertas
+ │   ├─ perfil_service.dart         nome e senha do perfil (simulado)
+ │   ├─ tema_service.dart           tema claro/escuro
  │   ├─ alertas_service.dart        regras que geram as ocorrências
  │   ├─ api_config.dart              URL da API e modo mock via dart-define
  │   ├─ mock_relatorios.dart        tipos e relatórios de exemplo
@@ -51,7 +53,7 @@ lib/
      ├─ indicadores_financeiros.dart
      ├─ alertas_operacionais.dart
      ├─ relatorios_gerenciais.dart
-     └─ configuracoes.dart
+     └─ configuracoes.dart          tema claro/escuro, nome e senha
 ```
 
 Dependência dos gráficos: `fl_chart`.

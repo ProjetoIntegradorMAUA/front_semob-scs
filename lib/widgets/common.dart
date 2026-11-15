@@ -52,11 +52,11 @@ class SectionCard extends StatelessWidget {
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.all(16),
-      decoration: cardDecoration,
+      decoration: cardDecoration(context),
       child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
         Text(title,
-            style: const TextStyle(
-                fontSize: 14, fontWeight: FontWeight.w600, color: AppColors.text)),
+            style: TextStyle(
+                fontSize: 14, fontWeight: FontWeight.w600, color: context.cores.text)),
         const SizedBox(height: 16),
         child,
       ]),
@@ -86,7 +86,7 @@ class KpiCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       padding: const EdgeInsets.all(16),
-      decoration: cardDecoration,
+      decoration: cardDecoration(context),
       child: Row(children: [
         Container(
           width: 44,
@@ -104,14 +104,14 @@ class KpiCard extends StatelessWidget {
               fit: BoxFit.scaleDown,
               alignment: Alignment.centerLeft,
               child: Text(value,
-                  style: const TextStyle(
-                      fontSize: 22, fontWeight: FontWeight.w700, color: AppColors.text)),
+                  style: TextStyle(
+                      fontSize: 22, fontWeight: FontWeight.w700, color: context.cores.text)),
             ),
             const SizedBox(height: 2),
             Text(label,
                 maxLines: 2,
                 overflow: TextOverflow.ellipsis,
-                style: const TextStyle(fontSize: 12, color: AppColors.muted)),
+                style: TextStyle(fontSize: 12, color: context.cores.muted)),
             if (hint != null)
               Padding(
                 padding: const EdgeInsets.only(top: 2),
@@ -121,7 +121,7 @@ class KpiCard extends StatelessWidget {
                     style: TextStyle(
                         fontSize: 11,
                         fontWeight: FontWeight.w600,
-                        color: hintColor ?? AppColors.muted)),
+                        color: hintColor ?? context.cores.muted)),
               ),
           ]),
         ),

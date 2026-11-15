@@ -126,8 +126,8 @@ class _AlertasOperacionaisPageState extends State<AlertasOperacionaisPage> {
                               Text(a.descricao,
                                   maxLines: 2,
                                   overflow: TextOverflow.ellipsis,
-                                  style: const TextStyle(
-                                      fontSize: 11, color: AppColors.muted)),
+                                  style: TextStyle(
+                                      fontSize: 11, color: context.cores.muted)),
                             ],
                           ),
                         )),
@@ -170,7 +170,7 @@ class _AlertasOperacionaisPageState extends State<AlertasOperacionaisPage> {
                   decoration: BoxDecoration(
                     color: _corGravidade(a.gravidade).withValues(alpha: 0.06),
                     borderRadius: BorderRadius.circular(8),
-                    border: Border.all(color: AppColors.border),
+                    border: Border.all(color: context.cores.border),
                   ),
                   child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
                     Text('${a.id} · ${a.tipo}',

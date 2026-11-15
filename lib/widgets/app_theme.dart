@@ -1,14 +1,10 @@
 import 'package:flutter/material.dart';
 
+/// Cores de marca: iguais no tema claro e no escuro.
 class AppColors {
   static const primary = Color(0xFF1D5FD1);
   static const sidebarTop = Color(0xFF0A3D91);
   static const sidebarBottom = Color(0xFF061B4A);
-  static const background = Color(0xFFF3F6FB);
-  static const card = Colors.white;
-  static const border = Color(0xFFE2E8F0);
-  static const text = Color(0xFF1E293B);
-  static const muted = Color(0xFF64748B);
 
   static const teal = Color(0xFF14B8A6);
   static const blue = Color(0xFF2563EB);
@@ -18,11 +14,15 @@ class AppColors {
   static const infoBackground = Color(0xFFEFF6FF);
 }
 
-final cardDecoration = BoxDecoration(
-  color: AppColors.card,
-  borderRadius: BorderRadius.circular(12),
-  border: Border.all(color: AppColors.border),
-);
+/// Cores que MUDAM entre tema claro e escuro (fundo, cards, bordas e textos).
+/// Uso: `context.cores.card`, `context.cores.muted`, etc.
+@immutable
+class AppPalette extends ThemeExtension<AppPalette> {
+  final Color background;
+  final Color card;
+  final Color border;
+  final Color text;
+  final Color muted;
 
 ThemeData buildTheme() => ThemeData(
       useMaterial3: true,
@@ -60,3 +60,27 @@ ThemeData buildTheme() => ThemeData(
         ),
       ),
     );
+  }
+}
+
+extension AppThemeContext on BuildContext {
+  AppPalette get cores => Theme.of(this).extension<AppPalette>()!;
+}
+
+/// Moldura branca (ou escura) dos cards.
+BoxDecoration cardDecoration(BuildContext context) => BoxDecoration(
+      color: context.cores.card,
+      borderRadius: BorderRadius.circular(12),
+      border: Border.all(color: context.cores.border),
+    );
+
+ThemeData buildTheme([Brightness brilho = Brightness.light]) {
+  final paleta = brilho == Brightness.dark ? AppPalette.escuro : AppPalette.claro;
+  return ThemeData(
+    useMaterial3: true,
+    brightness: brilho,
+    scaffoldBackgroundColor: paleta.background,
+    colorScheme: ColorScheme.fromSeed(seedColor: AppColors.primary, brightness: brilho),
+    extensions: [paleta],
+  );
+}

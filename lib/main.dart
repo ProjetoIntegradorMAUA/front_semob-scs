@@ -6,6 +6,7 @@ import 'pages/dashboard_geral.dart';
 import 'pages/indicadores_financeiros.dart';
 import 'pages/operacao_frota.dart';
 import 'pages/relatorios_gerenciais.dart';
+import 'services/tema_service.dart';
 import 'widgets/app_theme.dart';
 import 'widgets/navbar.dart';
 
@@ -18,11 +19,17 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'SEMOB-SCS',
-      debugShowCheckedModeBanner: false,
-      theme: buildTheme(),
-      home: const HomeShell(),
+    // Troca o tema na hora quando o switch de Configurações muda.
+    return ListenableBuilder(
+      listenable: TemaService.instance,
+      builder: (context, _) => MaterialApp(
+        title: 'SEMOB-SCS',
+        debugShowCheckedModeBanner: false,
+        theme: buildTheme(Brightness.light),
+        darkTheme: buildTheme(Brightness.dark),
+        themeMode: TemaService.instance.modo,
+        home: const HomeShell(),
+      ),
     );
   }
 }

@@ -95,7 +95,7 @@ class _RelatoriosGerenciaisPageState extends State<RelatoriosGerenciaisPage> {
                         : Colors.transparent,
                     borderRadius: BorderRadius.circular(8),
                     border: Border.all(
-                        color: t.nome == _tipo ? AppColors.primary : AppColors.border),
+                        color: t.nome == _tipo ? AppColors.primary : context.cores.border),
                   ),
                   child: InkWell(
                     borderRadius: BorderRadius.circular(8),
@@ -110,8 +110,8 @@ class _RelatoriosGerenciaisPageState extends State<RelatoriosGerenciaisPage> {
                                   fontSize: 13, fontWeight: FontWeight.w600)),
                           const SizedBox(height: 2),
                           Text(t.descricao,
-                              style: const TextStyle(
-                                  fontSize: 11, color: AppColors.muted)),
+                              style: TextStyle(
+                                  fontSize: 11, color: context.cores.muted)),
                         ]),
                       ),
                     ),
@@ -142,7 +142,7 @@ class _RelatoriosGerenciaisPageState extends State<RelatoriosGerenciaisPage> {
                     DataCell(Text(r.geradoEm)),
                     DataCell(Text(r.formato)),
                     DataCell(Text(r.status,
-                        style: const TextStyle(
+                        style: TextStyle(
                             color: AppColors.green, fontWeight: FontWeight.w600))),
                   ]),
               ],

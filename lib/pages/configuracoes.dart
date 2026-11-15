@@ -12,34 +12,82 @@ class ConfiguracoesPage extends StatefulWidget {
 }
 
 class _ConfiguracoesPageState extends State<ConfiguracoesPage> {
-  String _periodoPadrao = 'Agosto/2026';
-  bool _notificarCriticos = true;
-  bool _resumoSemanal = false;
+  final _perfil = PerfilService.instance;
+  final _tema = TemaService.instance;
 
-  // SIMULAÇÃO: as preferências ainda não são gravadas em lugar nenhum.
-  void _salvar() {
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Preferências salvas (simulação: ainda não persistem).')),
-    );
+  late final TextEditingController _nome = TextEditingController(text: _perfil.nome);
+  final _atual = TextEditingController();
+  final _nova = TextEditingController();
+  final _confirmacao = TextEditingController();
+
+  bool _ocultar = true;
+  String? _erroNome;
+  String? _erroSenha;
+
+  @override
+  void dispose() {
+    _nome.dispose();
+    _atual.dispose();
+    _nova.dispose();
+    _confirmacao.dispose();
+    super.dispose();
   }
 
-  Widget _info(String rotulo, String valor) => Padding(
-        padding: const EdgeInsets.symmetric(vertical: 6),
-        child: Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
-          SizedBox(
-            width: 90,
-            child: Text(rotulo,
-                style: const TextStyle(fontSize: 12, color: AppColors.muted)),
-          ),
-          Expanded(child: Text(valor, style: const TextStyle(fontSize: 13))),
-        ]),
+  void _aviso(String texto) =>
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(texto)));
+
+  void _salvarNome() {
+    final erro = _perfil.alterarNome(_nome.text);
+    setState(() => _erroNome = erro);
+    if (erro == null) _aviso('Nome atualizado.');
+  }
+
+  void _salvarSenha() {
+    final erro = _perfil.alterarSenha(
+      atual: _atual.text,
+      nova: _nova.text,
+      confirmacao: _confirmacao.text,
+    );
+    setState(() => _erroSenha = erro);
+    if (erro == null) {
+      _atual.clear();
+      _nova.clear();
+      _confirmacao.clear();
+      _aviso('Senha alterada.');
+    }
+  }
+
+  Widget _limitado(Widget filho) => Align(
+        alignment: Alignment.centerLeft,
+        child: ConstrainedBox(
+          constraints: const BoxConstraints(maxWidth: 560),
+          child: filho,
+        ),
       );
+
+  Widget _campoSenha(String rotulo, TextEditingController controller, Key chave) {
+    return TextField(
+      key: chave,
+      controller: controller,
+      obscureText: _ocultar,
+      decoration: InputDecoration(
+        labelText: rotulo,
+        border: const OutlineInputBorder(),
+        isDense: true,
+        suffixIcon: IconButton(
+          tooltip: _ocultar ? 'Mostrar senhas' : 'Ocultar senhas',
+          icon: Icon(_ocultar ? Icons.visibility_outlined : Icons.visibility_off_outlined),
+          onPressed: () => setState(() => _ocultar = !_ocultar),
+        ),
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
     return PageScaffold(
       title: 'Configurações',
-      subtitle: 'Preferências do painel e informações do sistema',
+      subtitle: 'Tema do sistema e dados do seu perfil',
       children: [
         SplitRow(
           main: SectionCard(
@@ -62,6 +110,27 @@ class _ConfiguracoesPageState extends State<ConfiguracoesPage> {
                     if (v != null) setState(() => _periodoPadrao = v);
                   },
                 ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Text(_perfil.nome,
+                      style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.w600,
+                          color: context.cores.text)),
+                ),
+              ]),
+            ),
+            const SizedBox(height: 16),
+            TextField(
+              key: const Key('campo-nome'),
+              controller: _nome,
+              textInputAction: TextInputAction.done,
+              onSubmitted: (_) => _salvarNome(),
+              decoration: InputDecoration(
+                labelText: 'Nome',
+                border: const OutlineInputBorder(),
+                isDense: true,
+                errorText: _erroNome,
               ),
               const SizedBox(height: 8),
               Material(
