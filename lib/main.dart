@@ -45,6 +45,16 @@ class HomeShell extends StatefulWidget {
 class _HomeShellState extends State<HomeShell> {
   int _pagina = 0;
 
+  static const _titulos = [
+    'Dashboard',
+    'Operação da Frota',
+    'Passageiros',
+    'Financeiro',
+    'Alertas',
+    'Relatórios',
+    'Configurações',
+  ];
+
   // Índices iguais aos do navbar.dart
   Widget _conteudo() {
     switch (_pagina) {
@@ -90,7 +100,7 @@ class _HomeShellState extends State<HomeShell> {
       appBar: AppBar(
         backgroundColor: const Color(0xFF004B93),
         foregroundColor: Colors.white,
-        title: const Text('SEMOB-SCS'),
+        title: Text('SEMOB-SCS · ${_titulos[_pagina]}'),
       ),
       drawer: Drawer(
         child: SideNavbar(
@@ -101,7 +111,10 @@ class _HomeShellState extends State<HomeShell> {
           },
         ),
       ),
-      body: _conteudo(),
+      body: AnimatedSwitcher(
+        duration: const Duration(milliseconds: 180),
+        child: KeyedSubtree(key: ValueKey(_pagina), child: _conteudo()),
+      ),
     );
   }
 }
