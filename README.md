@@ -5,18 +5,21 @@ Front-end Flutter do SEMOB-SCS (dashboards de transporte municipal).
 
 ```bash
 flutter pub get
-flutter run -d chrome
+flutter run -d chrome --web-port=8080
 ```
 
 Por padrão, a interface usa a base demonstrativa já extraída dos relatórios. Para preparar a execução integrada com o backend:
 
 ```bash
-flutter run -d chrome \
+flutter run -d chrome --web-port=8080 \
   --dart-define=SEMOB_API_URL=http://localhost:8000/api/v1 \
   --dart-define=SEMOB_USE_MOCKS=false
 ```
 
 A origem ativa aparece no menu e no topo do dashboard, evitando que dados simulados sejam confundidos com dados online. A configuração da URL já está centralizada em `lib/services/api_config.dart`; a troca efetiva dos services mock por chamadas HTTP é a próxima etapa de integração.
+
+A porta `8080` coincide com uma origem liberada no CORS padrão do backend. Se outra
+porta for usada, inclua sua origem em `CORS_ORIGINS` no ambiente da API.
 
 ## Estrutura da lib
 
