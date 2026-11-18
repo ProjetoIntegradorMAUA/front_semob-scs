@@ -11,7 +11,6 @@ class AppColors {
   static const orange = Color(0xFFF59E0B);
   static const red = Color(0xFFEF4444);
   static const green = Color(0xFF22C55E);
-  static const infoBackground = Color(0xFFEFF6FF);
 }
 
 /// Cores que MUDAM entre tema claro e escuro (fundo, cards, bordas e textos).
@@ -24,41 +23,55 @@ class AppPalette extends ThemeExtension<AppPalette> {
   final Color text;
   final Color muted;
 
-ThemeData buildTheme() => ThemeData(
-      useMaterial3: true,
-      scaffoldBackgroundColor: AppColors.background,
-      colorScheme: ColorScheme.fromSeed(
-        seedColor: AppColors.primary,
-        primary: AppColors.primary,
-        surface: AppColors.card,
-      ),
-      appBarTheme: const AppBarTheme(
-        elevation: 0,
-        centerTitle: false,
-        titleTextStyle: TextStyle(
-          color: Colors.white,
-          fontSize: 18,
-          fontWeight: FontWeight.w700,
-        ),
-      ),
-      inputDecorationTheme: InputDecorationTheme(
-        filled: true,
-        fillColor: Colors.white,
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(10),
-          borderSide: const BorderSide(color: AppColors.border),
-        ),
-        enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(10),
-          borderSide: const BorderSide(color: AppColors.border),
-        ),
-      ),
-      filledButtonTheme: FilledButtonThemeData(
-        style: FilledButton.styleFrom(
-          padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 14),
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-        ),
-      ),
+  const AppPalette({
+    required this.background,
+    required this.card,
+    required this.border,
+    required this.text,
+    required this.muted,
+  });
+
+  static const claro = AppPalette(
+    background: Color(0xFFF3F6FB),
+    card: Colors.white,
+    border: Color(0xFFE2E8F0),
+    text: Color(0xFF1E293B),
+    muted: Color(0xFF64748B),
+  );
+
+  static const escuro = AppPalette(
+    background: Color(0xFF0F172A),
+    card: Color(0xFF1E293B),
+    border: Color(0xFF334155),
+    text: Color(0xFFF1F5F9),
+    muted: Color(0xFF94A3B8),
+  );
+
+  @override
+  AppPalette copyWith({
+    Color? background,
+    Color? card,
+    Color? border,
+    Color? text,
+    Color? muted,
+  }) =>
+      AppPalette(
+        background: background ?? this.background,
+        card: card ?? this.card,
+        border: border ?? this.border,
+        text: text ?? this.text,
+        muted: muted ?? this.muted,
+      );
+
+  @override
+  AppPalette lerp(ThemeExtension<AppPalette>? other, double t) {
+    if (other is! AppPalette) return this;
+    return AppPalette(
+      background: Color.lerp(background, other.background, t)!,
+      card: Color.lerp(card, other.card, t)!,
+      border: Color.lerp(border, other.border, t)!,
+      text: Color.lerp(text, other.text, t)!,
+      muted: Color.lerp(muted, other.muted, t)!,
     );
   }
 }
