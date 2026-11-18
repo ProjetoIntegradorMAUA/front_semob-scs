@@ -168,6 +168,72 @@ class _AlertasOperacionaisPageState extends State<AlertasOperacionaisPage> {
                       onPressed: () => setState(() => _visiveis += 10),
                       child: const Text('Ver mais')),
               ]),
+              const Text('Ocorrências recentes',
+                  style: TextStyle(fontSize: 13, fontWeight: FontWeight.w600)),
+              const SizedBox(height: 8),
+              SingleChildScrollView(
+                scrollDirection: Axis.horizontal,
+                child: DataTable(
+                  headingRowHeight: 36,
+                  dataRowMinHeight: 64,
+                  dataRowMaxHeight: 84,
+                  columnSpacing: 20,
+                  columns: const [
+                    DataColumn(label: Text('Data')),
+                    DataColumn(label: Text('Linha')),
+                    DataColumn(label: Text('Ocorrência')),
+                    DataColumn(label: Text('Gravidade')),
+                    DataColumn(label: Text('Status')),
+                  ],
+                  rows: [
+                    for (final a in mostrados)
+                      DataRow(cells: [
+                        DataCell(Text(fmtDiaMes(a.data))),
+                        DataCell(Text(a.linha)),
+                        DataCell(SizedBox(
+                          width: 280,
+                          child: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(a.tipo,
+                                  style: const TextStyle(
+                                      fontSize: 13, fontWeight: FontWeight.w600)),
+                              Text(a.descricao,
+                                  maxLines: 2,
+                                  overflow: TextOverflow.ellipsis,
+                                  style: TextStyle(
+                                      fontSize: 11, color: context.cores.muted)),
+                            ],
+                          ),
+                        )),
+                        DataCell(Text(a.gravidade.rotulo,
+                            style: TextStyle(
+                                color: _corGravidade(a.gravidade),
+                                fontWeight: FontWeight.w600))),
+                        DataCell(Text(a.status.rotulo,
+                            style: TextStyle(
+                                color: _corStatus(a.status),
+                                fontWeight: FontWeight.w600))),
+                      ]),
+                  ],
+                ),
+              ),
+              const SizedBox(height: 8),
+              Wrap(
+                alignment: WrapAlignment.spaceBetween,
+                crossAxisAlignment: WrapCrossAlignment.center,
+                spacing: 8,
+                children: [
+                  Text('Mostrando ${mostrados.length} de ${filtrados.length}',
+                      style: const TextStyle(fontSize: 11, color: AppColors.muted)),
+                  if (mostrados.length < filtrados.length)
+                    TextButton(
+                        onPressed: () => setState(() => _visiveis += 10),
+                        child: const Text('Ver mais')),
+                ],
+              ),
             ]),
           ),
           side: SectionCard(

@@ -34,6 +34,26 @@ class PageScaffold extends StatelessWidget {
               if (i < children.length - 1) const SizedBox(height: 16),
             ],
           ]),
+    final horizontalPadding = MediaQuery.sizeOf(context).width < 600 ? 16.0 : 24.0;
+    return SafeArea(
+      child: SingleChildScrollView(
+        padding: EdgeInsets.fromLTRB(horizontalPadding, 20, horizontalPadding, 32),
+        child: Center(
+          child: ConstrainedBox(
+            constraints: const BoxConstraints(maxWidth: 1500),
+            child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+              Text(title,
+                  style: const TextStyle(
+                      fontSize: 24,
+                      fontWeight: FontWeight.w700,
+                      color: AppColors.text)),
+              const SizedBox(height: 4),
+              Text(subtitle,
+                  style: const TextStyle(fontSize: 13, color: AppColors.muted)),
+              const SizedBox(height: 20),
+              for (final c in children) ...[c, const SizedBox(height: 16)],
+            ]),
+          ),
         ),
       ),
     );
@@ -128,8 +148,8 @@ class KpiCard extends StatelessWidget {
     );
   }
 }
-
-/// Grade de KPIs: 4 colunas no desktop, 2 no mobile (todos do mesmo tamanho).
+          
+/// Grade de KPIs: 4 colunas no desktop, 2 no tablet e 1 no celular estreito.
 class KpiGrid extends StatelessWidget {
   final List<Widget> children;
   const KpiGrid({super.key, required this.children});
@@ -137,7 +157,11 @@ class KpiGrid extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return LayoutBuilder(builder: (context, c) {
-      final cols = c.maxWidth >= 900 ? 4 : 2;
+      final cols = c.maxWidth >= 1050
+          ? 4
+          : c.maxWidth >= 520
+              ? 2
+              : 1;
       const gap = 16.0;
       final w = (c.maxWidth - gap * (cols - 1)) / cols;
       return Wrap(
@@ -149,8 +173,54 @@ class KpiGrid extends StatelessWidget {
   }
 }
 
-/// Duas colunas no desktop (padrão 2/3 + 1/3), com cards da MESMA ALTURA;
-/// empilha no mobile. Com [sideFirst], a coluna [side] vem primeiro.
+/// Informa de forma visível se a tela usa dados demonstrativos ou a API.
+class DataSourceBanner extends StatelessWidget {
+  final bool isMock;
+  final String source;
+  final String period;
+
+  const DataSourceBanner({
+    super.key,
+    required this.isMock,
+    required this.source,
+    required this.period,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final color = isMock ? AppColors.orange : AppColors.green;
+    return Semantics(
+      label: 'Origem dos dados: $source. Período: $period.',
+      child: Container(
+        width: double.infinity,
+        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+        decoration: BoxDecoration(
+          color: color.withValues(alpha: 0.08),
+          borderRadius: BorderRadius.circular(10),
+          border: Border.all(color: color.withValues(alpha: 0.35)),
+        ),
+        child: Wrap(
+          spacing: 10,
+          runSpacing: 6,
+          crossAxisAlignment: WrapCrossAlignment.center,
+          children: [
+            Icon(isMock ? Icons.science_outlined : Icons.cloud_done_outlined,
+                size: 18, color: color),
+            Text(source,
+                style: TextStyle(
+                    color: color, fontSize: 12, fontWeight: FontWeight.w700)),
+            const Text('•', style: TextStyle(color: AppColors.muted)),
+            Text(period,
+                style: const TextStyle(fontSize: 12, color: AppColors.muted)),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+/// Duas colunas no desktop (padrão 2/3 + 1/3); empilha no mobile.
+/// Com [sideFirst], a coluna [side] vem primeiro (esquerda / topo).
 class SplitRow extends StatelessWidget {
   final Widget main;
   final Widget side;

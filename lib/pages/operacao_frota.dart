@@ -104,6 +104,37 @@ class _OperacaoFrotaPageState extends State<OperacaoFrotaPage> {
                     style: const TextStyle(fontWeight: FontWeight.w700)),
                 Text(fmtPct(progFaixas == 0 ? 0 : realFaixas / progFaixas * 100),
                     style: const TextStyle(fontWeight: FontWeight.w700)),
+        const _FaixasTable(),
+      ],
+    );
+  }
+}
+
+class _Filtros extends StatelessWidget {
+  final String mes;
+  final ValueChanged<String> onChanged;
+  final VoidCallback onFiltrar;
+  const _Filtros({required this.mes, required this.onChanged, required this.onFiltrar});
+
+  @override
+  Widget build(BuildContext context) {
+    return SectionCard(
+      title: 'Filtros',
+      child: Wrap(
+        spacing: 12,
+        runSpacing: 12,
+        crossAxisAlignment: WrapCrossAlignment.center,
+        children: [
+          SizedBox(
+            width: 200,
+            child: DropdownButtonFormField<String>(
+              initialValue: mes,
+              isExpanded: true,
+              decoration: const InputDecoration(
+                  labelText: 'Período', border: OutlineInputBorder(), isDense: true),
+              items: [
+                for (final m in MockData.meses)
+                  DropdownMenuItem(value: m, child: Text(m)),
               ],
             ],
           ),

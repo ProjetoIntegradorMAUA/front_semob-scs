@@ -4,6 +4,9 @@ import '../models/dados_mes.dart';
 import '../services/alertas_service.dart';
 import '../services/dados_service.dart';
 import '../services/formatadores.dart';
+import '../services/api_config.dart';
+import '../services/formatadores.dart';
+import '../services/mock_data.dart';
 import '../widgets/app_theme.dart';
 import '../widgets/charts.dart';
 import '../widgets/common.dart';
@@ -21,6 +24,11 @@ class DashboardGeralPage extends StatelessWidget {
       title: 'Dashboard de Operação',
       subtitle: '${d.rotulo} · São Caetano do Sul',
       children: [
+        const DataSourceBanner(
+          isMock: ApiConfig.useMocks,
+          source: ApiConfig.sourceLabel,
+          period: 'Atualização de referência: 04/09/2026 às 08:00',
+        ),
         KpiGrid(children: [
           KpiCard(
               icon: Icons.groups_outlined,

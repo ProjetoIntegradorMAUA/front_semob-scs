@@ -72,6 +72,35 @@ class _IndicadoresFinanceirosPageState extends State<IndicadoresFinanceirosPage>
           inicial: _aplicado,
           descricao: 'Período exibido: ${d.periodo}',
           aoFiltrar: (rotulo) => setState(() => _aplicado = rotulo),
+        SectionCard(
+          title: 'Filtro financeiro',
+          child: Wrap(
+            spacing: 12,
+            runSpacing: 12,
+            crossAxisAlignment: WrapCrossAlignment.center,
+            children: [
+              SizedBox(
+                width: 200,
+                child: DropdownButtonFormField<String>(
+                  initialValue: _mes,
+                  isExpanded: true,
+                  decoration: const InputDecoration(
+                      labelText: 'Período',
+                      border: OutlineInputBorder(),
+                      isDense: true),
+                  items: [
+                    for (final m in MockData.meses)
+                      DropdownMenuItem(value: m, child: Text(m)),
+                  ],
+                  onChanged: (v) {
+                    if (v != null) setState(() => _mes = v);
+                  },
+                ),
+              ),
+              // TODO: recarregar os dados do mês selecionado (API / CSV).
+              FilledButton(onPressed: () {}, child: const Text('Filtrar')),
+            ],
+          ),
         ),
         KpiGrid(children: [
           KpiCard(
