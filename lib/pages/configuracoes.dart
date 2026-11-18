@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import '../services/api_config.dart';
-import '../services/mock_data.dart';
+import '../services/perfil_service.dart';
+import '../services/tema_service.dart';
 import '../widgets/app_theme.dart';
 import '../widgets/common.dart';
 
@@ -189,26 +189,32 @@ class _ConfiguracoesPageState extends State<ConfiguracoesPage> {
       title: 'Configurações',
       subtitle: 'Tema do sistema e dados do seu perfil',
       children: [
-        SplitRow(
-          main: SectionCard(
-            title: 'Preferências',
-            child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-              SizedBox(
-                width: 260,
-                child: DropdownButtonFormField<String>(
-                  initialValue: _periodoPadrao,
-                  isExpanded: true,
-                  decoration: const InputDecoration(
-                      labelText: 'Período padrão',
-                      border: OutlineInputBorder(),
-                      isDense: true),
-                  items: [
-                    for (final m in MockData.meses)
-                      DropdownMenuItem(value: m, child: Text(m)),
-                  ],
-                  onChanged: (v) {
-                    if (v != null) setState(() => _periodoPadrao = v);
-                  },
+        // ---------- Aparência ----------
+        _limitado(SectionCard(
+          title: 'Aparência',
+          child: ListenableBuilder(
+            listenable: _tema,
+            builder: (context, _) => SwitchListTile(
+              key: const Key('switch-tema'),
+              contentPadding: EdgeInsets.zero,
+              secondary: Icon(_tema.escuro ? Icons.dark_mode_outlined : Icons.light_mode_outlined),
+              title: const Text('Tema escuro'),
+              subtitle: Text(_tema.escuro ? 'Tema escuro ativado' : 'Tema claro ativado'),
+              value: _tema.escuro,
+              onChanged: _tema.definirEscuro,
+            ),
+          ),
+        )),
+
+        // ---------- Nome ----------
+        _limitado(SectionCard(
+          title: 'Perfil',
+          child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+            ListenableBuilder(
+              listenable: _perfil,
+              builder: (context, _) => Row(children: [
+                CircleAvatar(
+                  child: Text(_perfil.nome.isEmpty ? '?' : _perfil.nome[0].toUpperCase()),
                 ),
                 const SizedBox(width: 12),
                 Expanded(
@@ -232,43 +238,41 @@ class _ConfiguracoesPageState extends State<ConfiguracoesPage> {
                 isDense: true,
                 errorText: _erroNome,
               ),
-              const SizedBox(height: 8),
-              Material(
-                color: Colors.transparent,
-                child: SwitchListTile(
-                  contentPadding: EdgeInsets.zero,
-                  title: const Text('Notificar alertas críticos'),
-                  subtitle: const Text('Avisar quando surgir uma ocorrência crítica'),
-                  value: _notificarCriticos,
-                  onChanged: (v) => setState(() => _notificarCriticos = v),
-                ),
-              ),
-              Material(
-                color: Colors.transparent,
-                child: SwitchListTile(
-                  contentPadding: EdgeInsets.zero,
-                  title: const Text('Resumo semanal por e-mail'),
-                  subtitle: const Text('Receber o consolidado da semana'),
-                  value: _resumoSemanal,
-                  onChanged: (v) => setState(() => _resumoSemanal = v),
-                ),
-              ),
-              const SizedBox(height: 8),
-              FilledButton(onPressed: _salvar, child: const Text('Salvar preferências')),
-            ]),
-          ),
-          side: SectionCard(
-            title: 'Sobre o sistema',
-            child: Column(children: [
-              _info('Sistema', 'SEMOB-SCS'),
-              _info('Versão', '0.1.0 (protótipo)'),
-              _info('Dados', 'Julho a Setembro/2026'),
-              _info('Fonte', 'Relatórios de utilização do transporte municipal'),
-              _info('Modo', ApiConfig.sourceLabel),
-              _info('API', ApiConfig.baseUrl),
-            ]),
-          ),
-        ),
+            ),
+            const SizedBox(height: 12),
+            FilledButton(
+              key: const Key('botao-salvar-nome'),
+              onPressed: _salvarNome,
+              child: const Text('Salvar nome'),
+            ),
+          ]),
+        )),
+
+        // ---------- Senha ----------
+        _limitado(SectionCard(
+          title: 'Alterar senha',
+          child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+            _campoSenha('Senha atual', _atual, const Key('campo-senha-atual')),
+            const SizedBox(height: 12),
+            _campoSenha('Nova senha', _nova, const Key('campo-senha-nova')),
+            const SizedBox(height: 12),
+            _campoSenha('Confirmar nova senha', _confirmacao, const Key('campo-senha-confirmacao')),
+            if (_erroSenha != null) ...[
+              const SizedBox(height: 12),
+              Text(_erroSenha!, style: const TextStyle(color: AppColors.red)),
+            ],
+            const SizedBox(height: 12),
+            FilledButton(
+              key: const Key('botao-alterar-senha'),
+              onPressed: _salvarSenha,
+              child: const Text('Alterar senha'),
+            ),
+            const SizedBox(height: 12),
+            // Dica do protótipo — apague quando houver login real.
+            Text('Protótipo: a senha inicial é ${PerfilService.senhaInicial}.',
+                style: TextStyle(fontSize: 12, color: context.cores.muted)),
+          ]),
+        )),
       ],
     );
   }

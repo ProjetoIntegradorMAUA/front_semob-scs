@@ -157,11 +157,7 @@ class KpiGrid extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return LayoutBuilder(builder: (context, c) {
-      final cols = c.maxWidth >= 1050
-          ? 4
-          : c.maxWidth >= 520
-              ? 2
-              : 1;
+      final cols = c.maxWidth >= 900 ? 4 : 2;
       const gap = 16.0;
       final w = (c.maxWidth - gap * (cols - 1)) / cols;
       return Wrap(
@@ -170,52 +166,6 @@ class KpiGrid extends StatelessWidget {
         children: [for (final k in children) SizedBox(width: w, child: k)],
       );
     });
-  }
-}
-
-/// Informa de forma visível se a tela usa dados demonstrativos ou a API.
-class DataSourceBanner extends StatelessWidget {
-  final bool isMock;
-  final String source;
-  final String period;
-
-  const DataSourceBanner({
-    super.key,
-    required this.isMock,
-    required this.source,
-    required this.period,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    final color = isMock ? AppColors.orange : AppColors.green;
-    return Semantics(
-      label: 'Origem dos dados: $source. Período: $period.',
-      child: Container(
-        width: double.infinity,
-        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
-        decoration: BoxDecoration(
-          color: color.withValues(alpha: 0.08),
-          borderRadius: BorderRadius.circular(10),
-          border: Border.all(color: color.withValues(alpha: 0.35)),
-        ),
-        child: Wrap(
-          spacing: 10,
-          runSpacing: 6,
-          crossAxisAlignment: WrapCrossAlignment.center,
-          children: [
-            Icon(isMock ? Icons.science_outlined : Icons.cloud_done_outlined,
-                size: 18, color: color),
-            Text(source,
-                style: TextStyle(
-                    color: color, fontSize: 12, fontWeight: FontWeight.w700)),
-            const Text('•', style: TextStyle(color: AppColors.muted)),
-            Text(period,
-                style: const TextStyle(fontSize: 12, color: AppColors.muted)),
-          ],
-        ),
-      ),
-    );
   }
 }
 
