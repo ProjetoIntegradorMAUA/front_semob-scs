@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
-import '../services/api_config.dart';
 import '../services/formatadores.dart';
-import '../services/mock_data.dart';
 import '../widgets/app_theme.dart';
+import '../services/mock_data.dart';
 import '../widgets/charts.dart';
 import '../widgets/common.dart';
 
@@ -15,11 +14,6 @@ class DashboardGeralPage extends StatelessWidget {
       title: 'Dashboard de Operação',
       subtitle: 'Agosto de 2026 · São Caetano do Sul',
       children: [
-        const DataSourceBanner(
-          isMock: ApiConfig.useMocks,
-          source: ApiConfig.sourceLabel,
-          period: 'Atualização de referência: 04/09/2026 às 08:00',
-        ),
         KpiGrid(children: [
           KpiCard(
               icon: Icons.groups_outlined,

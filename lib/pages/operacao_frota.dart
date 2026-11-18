@@ -89,7 +89,6 @@ class _Filtros extends StatelessWidget {
             width: 200,
             child: DropdownButtonFormField<String>(
               initialValue: mes,
-              isExpanded: true,
               decoration: const InputDecoration(
                   labelText: 'Período', border: OutlineInputBorder(), isDense: true),
               items: [
