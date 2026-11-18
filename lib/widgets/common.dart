@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'app_theme.dart';
 
 /// Moldura padrão de cada página: título, subtítulo e lista de blocos.
+/// O conteúdo é centralizado e limitado a 1400 px (telas muito largas).
 class PageScaffold extends StatelessWidget {
   final String title;
   final String subtitle;
@@ -17,20 +18,49 @@ class PageScaffold extends StatelessWidget {
   Widget build(BuildContext context) {
     return SingleChildScrollView(
       padding: const EdgeInsets.all(24),
-      child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-        Text(title,
-            style: TextStyle(
-                fontSize: 22, fontWeight: FontWeight.w700, color: context.cores.text)),
-        const SizedBox(height: 4),
-        Text(subtitle, style: TextStyle(fontSize: 13, color: context.cores.muted)),
-        const SizedBox(height: 20),
-        for (final c in children) ...[c, const SizedBox(height: 16)],
-      ]),
+      child: Align(
+        alignment: Alignment.topCenter,
+        child: ConstrainedBox(
+          constraints: const BoxConstraints(maxWidth: 1400),
+          child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+            Text(title,
+                style: TextStyle(
+                    fontSize: 22, fontWeight: FontWeight.w700, color: context.cores.text)),
+            const SizedBox(height: 4),
+            Text(subtitle, style: TextStyle(fontSize: 13, color: context.cores.muted)),
+            const SizedBox(height: 20),
+            for (var i = 0; i < children.length; i++) ...[
+              children[i],
+              if (i < children.length - 1) const SizedBox(height: 16),
+            ],
+          ]),
+    final horizontalPadding = MediaQuery.sizeOf(context).width < 600 ? 16.0 : 24.0;
+    return SafeArea(
+      child: SingleChildScrollView(
+        padding: EdgeInsets.fromLTRB(horizontalPadding, 20, horizontalPadding, 32),
+        child: Center(
+          child: ConstrainedBox(
+            constraints: const BoxConstraints(maxWidth: 1500),
+            child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+              Text(title,
+                  style: const TextStyle(
+                      fontSize: 24,
+                      fontWeight: FontWeight.w700,
+                      color: AppColors.text)),
+              const SizedBox(height: 4),
+              Text(subtitle,
+                  style: const TextStyle(fontSize: 13, color: AppColors.muted)),
+              const SizedBox(height: 20),
+              for (final c in children) ...[c, const SizedBox(height: 16)],
+            ]),
+          ),
+        ),
+      ),
     );
   }
 }
 
-/// Card branco com título.
+/// Card branco (ou escuro) com título.
 class SectionCard extends StatelessWidget {
   final String title;
   final Widget child;
@@ -40,7 +70,7 @@ class SectionCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       width: double.infinity,
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.all(20),
       decoration: cardDecoration(context),
       child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
         Text(title,
@@ -59,7 +89,7 @@ class KpiCard extends StatelessWidget {
   final Color color;
   final String value;
   final String label;
-  final String? hint; // linha pequena abaixo do rótulo (ex.: "+11,2% vs período")
+  final String? hint; // linha pequena abaixo do rótulo (ex.: "44,8% das vendas")
   final Color? hintColor;
   const KpiCard({
     super.key,
@@ -118,8 +148,8 @@ class KpiCard extends StatelessWidget {
     );
   }
 }
-
-/// Grade de KPIs: 4 colunas no desktop, 2 no mobile.
+          
+/// Grade de KPIs: 4 colunas no desktop, 2 no tablet e 1 no celular estreito.
 class KpiGrid extends StatelessWidget {
   final List<Widget> children;
   const KpiGrid({super.key, required this.children});
@@ -164,14 +194,97 @@ class SplitRow extends StatelessWidget {
       if (c.maxWidth < 900) {
         return Column(children: [primeiro, const SizedBox(height: 16), segundo]);
       }
-      return Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Expanded(flex: sideFirst ? sideFlex : mainFlex, child: primeiro),
-          const SizedBox(width: 16),
-          Expanded(flex: sideFirst ? mainFlex : sideFlex, child: segundo),
-        ],
+      return IntrinsicHeight(
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Expanded(flex: sideFirst ? sideFlex : mainFlex, child: primeiro),
+            const SizedBox(width: 16),
+            Expanded(flex: sideFirst ? mainFlex : sideFlex, child: segundo),
+          ],
+        ),
       );
     });
+  }
+}
+
+/// Selo colorido (ex.: gravidade e status dos alertas).
+class Pilula extends StatelessWidget {
+  final String texto;
+  final Color cor;
+  const Pilula(this.texto, this.cor, {super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 3),
+      decoration: BoxDecoration(
+        color: cor.withValues(alpha: 0.14),
+        borderRadius: BorderRadius.circular(20),
+      ),
+      child: Text(texto,
+          style: TextStyle(fontSize: 11, fontWeight: FontWeight.w700, color: cor)),
+    );
+  }
+}
+
+/// Card de filtro por período: o usuário escolhe e clica em "Filtrar".
+class FiltroPeriodoCard extends StatefulWidget {
+  final String titulo;
+  final List<String> opcoes;
+  final String inicial;
+  final String? descricao; // texto ao lado do botão (ex.: período exibido)
+  final ValueChanged<String> aoFiltrar;
+  const FiltroPeriodoCard({
+    super.key,
+    required this.titulo,
+    required this.opcoes,
+    required this.inicial,
+    required this.aoFiltrar,
+    this.descricao,
+  });
+
+  @override
+  State<FiltroPeriodoCard> createState() => _FiltroPeriodoCardState();
+}
+
+class _FiltroPeriodoCardState extends State<FiltroPeriodoCard> {
+  late String _selecionado = widget.inicial;
+
+  @override
+  Widget build(BuildContext context) {
+    return SectionCard(
+      title: widget.titulo,
+      child: Wrap(
+        spacing: 16,
+        runSpacing: 12,
+        crossAxisAlignment: WrapCrossAlignment.center,
+        children: [
+          SizedBox(
+            width: 300,
+            child: DropdownButtonFormField<String>(
+              initialValue: _selecionado,
+              isExpanded: true,
+              decoration: const InputDecoration(
+                  labelText: 'Período', border: OutlineInputBorder(), isDense: true),
+              items: [
+                for (final o in widget.opcoes) DropdownMenuItem(value: o, child: Text(o)),
+              ],
+              onChanged: (v) {
+                if (v != null) setState(() => _selecionado = v);
+              },
+            ),
+          ),
+          FilledButton.icon(
+            onPressed: () => widget.aoFiltrar(_selecionado),
+            icon: const Icon(Icons.filter_alt_outlined, size: 18),
+            label: const Text('Filtrar'),
+          ),
+          if (widget.descricao != null)
+            Text(widget.descricao!,
+                style: TextStyle(fontSize: 12, color: context.cores.muted)),
+        ],
+      ),
+    );
   }
 }

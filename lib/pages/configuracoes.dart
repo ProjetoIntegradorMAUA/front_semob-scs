@@ -57,14 +57,6 @@ class _ConfiguracoesPageState extends State<ConfiguracoesPage> {
     }
   }
 
-  Widget _limitado(Widget filho) => Align(
-        alignment: Alignment.centerLeft,
-        child: ConstrainedBox(
-          constraints: const BoxConstraints(maxWidth: 560),
-          child: filho,
-        ),
-      );
-
   Widget _campoSenha(String rotulo, TextEditingController controller, Key chave) {
     return TextField(
       key: chave,
@@ -83,6 +75,114 @@ class _ConfiguracoesPageState extends State<ConfiguracoesPage> {
     );
   }
 
+  Widget _cardAparencia() => SectionCard(
+        title: 'Aparência',
+        child: ListenableBuilder(
+          listenable: _tema,
+          builder: (context, _) => SwitchListTile(
+            key: const Key('switch-tema'),
+            contentPadding: EdgeInsets.zero,
+            secondary: Icon(_tema.escuro ? Icons.dark_mode_outlined : Icons.light_mode_outlined),
+            title: const Text('Tema escuro'),
+            subtitle: Text(_tema.escuro ? 'Tema escuro ativado' : 'Tema claro ativado'),
+            value: _tema.escuro,
+            onChanged: _tema.definirEscuro,
+          ),
+        ),
+      );
+
+  Widget _cardPerfil(BuildContext context) => SectionCard(
+        title: 'Perfil',
+        child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+          ListenableBuilder(
+            listenable: _perfil,
+            builder: (context, _) => Row(children: [
+              CircleAvatar(
+                radius: 26,
+                child: Text(_perfil.nome.isEmpty ? '?' : _perfil.nome[0].toUpperCase(),
+                    style: const TextStyle(fontSize: 20)),
+              ),
+              const SizedBox(width: 14),
+              Expanded(
+                child: Text(_perfil.nome,
+                    style: TextStyle(
+                        fontSize: 17,
+                        fontWeight: FontWeight.w600,
+                        color: context.cores.text)),
+              ),
+            ]),
+          ),
+          const SizedBox(height: 20),
+          TextField(
+            key: const Key('campo-nome'),
+            controller: _nome,
+            textInputAction: TextInputAction.done,
+            onSubmitted: (_) => _salvarNome(),
+            decoration: InputDecoration(
+              labelText: 'Nome',
+              border: const OutlineInputBorder(),
+              isDense: true,
+              errorText: _erroNome,
+            ),
+          ),
+          const SizedBox(height: 16),
+          SizedBox(
+            width: double.infinity,
+            height: 44,
+            child: FilledButton(
+              key: const Key('botao-salvar-nome'),
+              onPressed: _salvarNome,
+              child: const Text('Salvar nome'),
+            ),
+          ),
+        ]),
+      );
+
+  Widget _cardSenha(BuildContext context) => SectionCard(
+        title: 'Alterar senha',
+        child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+          _campoSenha('Senha atual', _atual, const Key('campo-senha-atual')),
+          const SizedBox(height: 14),
+          _campoSenha('Nova senha', _nova, const Key('campo-senha-nova')),
+          const SizedBox(height: 14),
+          _campoSenha('Confirmar nova senha', _confirmacao, const Key('campo-senha-confirmacao')),
+          if (_erroSenha != null) ...[
+            const SizedBox(height: 12),
+            Text(_erroSenha!, style: const TextStyle(color: AppColors.red)),
+          ],
+          const SizedBox(height: 16),
+          SizedBox(
+            width: double.infinity,
+            height: 44,
+            child: FilledButton(
+              key: const Key('botao-alterar-senha'),
+              onPressed: _salvarSenha,
+              child: const Text('Alterar senha'),
+            ),
+          ),
+          const SizedBox(height: 12),
+          // Dica do protótipo — apague quando houver login real.
+          Text('Protótipo: a senha inicial é ${PerfilService.senhaInicial}.',
+              style: TextStyle(fontSize: 12, color: context.cores.muted)),
+        ]),
+      );
+
+  @override
+  Widget build(BuildContext context) {
+    // Duas colunas iguais: à esquerda Aparência + Perfil, à direita Senha.
+    return PageScaffold(
+      title: 'Configurações',
+      subtitle: 'Tema do sistema e dados do seu perfil',
+      children: [
+        SplitRow(
+          mainFlex: 1,
+          sideFlex: 1,
+          main: Column(children: [
+            _cardAparencia(),
+            const SizedBox(height: 16),
+            _cardPerfil(context),
+          ]),
+          side: _cardSenha(context),
   @override
   Widget build(BuildContext context) {
     return PageScaffold(
