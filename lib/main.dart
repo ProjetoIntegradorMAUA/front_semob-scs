@@ -4,6 +4,7 @@ import 'pages/analise_passageiros.dart';
 import 'pages/configuracoes.dart';
 import 'pages/dashboard_geral.dart';
 import 'pages/indicadores_financeiros.dart';
+import 'pages/login.dart';
 import 'pages/operacao_frota.dart';
 import 'pages/relatorios_gerenciais.dart';
 import 'services/tema_service.dart';
@@ -28,9 +29,27 @@ class MyApp extends StatelessWidget {
         theme: buildTheme(Brightness.light),
         darkTheme: buildTheme(Brightness.dark),
         themeMode: TemaService.instance.modo,
-        home: const HomeShell(),
+        home: const Entrada(),
       ),
     );
+  }
+}
+
+/// Mostra o login primeiro; ao entrar, troca para o app principal.
+class Entrada extends StatefulWidget {
+  const Entrada({super.key});
+
+  @override
+  State<Entrada> createState() => _EntradaState();
+}
+
+class _EntradaState extends State<Entrada> {
+  bool _logado = false;
+
+  @override
+  Widget build(BuildContext context) {
+    if (_logado) return const HomeShell();
+    return LoginPage(onLogin: () => setState(() => _logado = true));
   }
 }
 
