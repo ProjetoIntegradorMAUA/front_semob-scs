@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../widgets/app_theme.dart';
+import 'esqueci_senha.dart';
 
 class LoginPage extends StatefulWidget {
   final VoidCallback onLogin;
@@ -135,7 +136,7 @@ class _LoginPageState extends State<LoginPage> {
                           hintText: 'Digite sua senha',
                           border: OutlineInputBorder(),
                         ),
-                      ),      
+                      ),
                       const SizedBox(height: 24),
                       SizedBox(
                         width: double.infinity,
@@ -150,11 +151,21 @@ class _LoginPageState extends State<LoginPage> {
                         ),
                       ),
                       const SizedBox(height: 16),
-                      const Text(
-                        'Esqueci minha senha',
-                        style: TextStyle(
-                          fontSize: 12,
-                          color: AppColors.primary,
+                      InkWell(
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (_) => const EsqueciSenhaPage(),
+                            ),
+                          );
+                        },
+                        child: const Text(
+                          'Esqueci minha senha',
+                          style: TextStyle(
+                            fontSize: 12,
+                            color: AppColors.primary,
+                          ),
                         ),
                       ),
                     ],
