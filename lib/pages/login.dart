@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:navbar/widgets/campos_login.dart';
 import '../widgets/app_theme.dart';
 import 'esqueci_senha.dart';
 
@@ -27,7 +28,6 @@ class _LoginPageState extends State<LoginPage> {
 
   @override
   Widget build(BuildContext context) {
-    final cores = context.cores;
     final desktop = MediaQuery.sizeOf(context).width >= 900;
 
     return Scaffold(
@@ -91,87 +91,38 @@ class _LoginPageState extends State<LoginPage> {
           // Lado direito (formulário)
           Expanded(
             flex: 55,
-            child: Center(
-              child: SingleChildScrollView(
-                padding: const EdgeInsets.all(24),
-                child: Container(
-                  width: 456,
-                  padding: const EdgeInsets.all(48),
-                  decoration: cardDecoration(context),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Text(
-                        'Bem-vindo',
-                        style: TextStyle(
-                          fontSize: 28,
-                          fontWeight: FontWeight.bold,
-                          color: cores.text,
-                        ),
-                      ),
-                      const SizedBox(height: 8),
-                      Text(
-                        'Acesse o painel de operação de transporte',
-                        style: TextStyle(fontSize: 12, color: cores.muted),
-                      ),
-                      const SizedBox(height: 32),
-                      Text('E-mail', style: TextStyle(color: cores.muted)),
-                      const SizedBox(height: 8),
-                      TextField(
-                        controller: emailController,
-                        decoration: const InputDecoration(
-                          hintText: 'seu@email.com',
-                          border: OutlineInputBorder(),
-                        ),
-                      ),
-                      const SizedBox(height: 20),
-                      Text('Senha', style: TextStyle(color: cores.muted)),
-                      const SizedBox(height: 8),
-                      TextField(
-                        controller: senhaController,
-                        obscureText: true,
-                        onSubmitted: (_) => entrar(),
-                        decoration: const InputDecoration(
-                          hintText: 'Digite sua senha',
-                          border: OutlineInputBorder(),
-                        ),
-                      ),
-                      const SizedBox(height: 24),
-                      SizedBox(
-                        width: double.infinity,
-                        height: 44,
-                        child: ElevatedButton(
-                          onPressed: entrar,
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: AppColors.primary,
-                            foregroundColor: Colors.white,
-                          ),
-                          child: const Text('Entrar'),
-                        ),
-                      ),
-                      const SizedBox(height: 16),
-                      InkWell(
-                        onTap: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (_) => const EsqueciSenhaPage(),
-                            ),
-                          );
-                        },
-                        child: const Text(
-                          'Esqueci minha senha',
-                          style: TextStyle(
-                            fontSize: 12,
-                            color: AppColors.primary,
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
+            child: CardFormulario(
+              titulo: 'Bem-vindo',
+              subtitulo: 'Acesse o painel de operação de transporte',
+              filhos: [
+                CampoTexto(
+                  rotulo: 'E-mail',
+                  dica: 'seu@email.com',
+                  controller: emailController,
                 ),
-              ),
+                const SizedBox(height: 20),
+                CampoTexto(
+                  rotulo: 'Senha',
+                  dica: 'Digite sua senha',
+                  controller: senhaController,
+                  senha: true,
+                  aoEnviar: entrar,
+                ),
+                const SizedBox(height: 24),
+                BotaoPrincipal(texto: 'Entrar', aoClicar: entrar),
+                const SizedBox(height: 16),
+                LinkTexto(
+                  texto: 'Esqueci minha senha',
+                  aoClicar: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) => const EsqueciSenhaPage(),
+                      ),
+                    );
+                  },
+                ),
+              ],
             ),
           ),
         ],
