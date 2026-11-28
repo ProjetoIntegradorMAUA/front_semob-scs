@@ -1,7 +1,7 @@
 import '../models/alerta.dart';
+import '../models/dados_mes.dart';
+import 'dados_service.dart';
 import 'formatadores.dart';
-import 'mock_alertas.dart';
-import 'mock_dados_mes.dart';
 
 class _Bruto {
   final DateTime data;
@@ -12,71 +12,27 @@ class _Bruto {
   const _Bruto(this.data, this.linha, this.tipo, this.descricao, this.gravidade);
 }
 
-/// Gera as ocorrências a partir dos dados de agosto/setembro.
+/// Gera as ocorrências a partir dos dados dos meses.
 ///
-/// REGRAS (simuladas — o ZIP não traz gravidade nem status):
-///  - Viagens não realizadas no dia: >= 7 crítico, 3 a 6 atenção, 1 a 2 baixo.
-///  - Saldo diário negativo (vendas - utilização): <= -7.500 crítico,
-///    <= -3.000 atenção, demais baixo.
-///  - Viagem não iniciada: atenção.
-///  - Saldo negativo na 1ª quinzena de setembro: crítico.
+/// REGRAS (simuladas — os relatórios não trazem gravidade nem status):
+///  - Viagens não realizadas (por dia e linha): 3 ou mais = crítico,
+///    2 = atenção, 1 = baixo.
+///  - Viagens não iniciadas / não terminadas (por dia e linha): 3 ou mais =
+///    crítico, senão atenção.
+///  - Saldo diário negativo (vendas - utilização, vale para todas as linhas):
+///    <= -7.500 crítico, <= -3.000 atenção, demais baixo.
 ///  - Status: crítico = aberto, atenção = em análise, baixo = resolvido.
 class AlertasService {
+  static const todas = 'Todas';
+
   static List<Alerta> listar() {
     final brutos = <_Bruto>[];
-
-    final nao = MockAlertas.naoRealizadasPorDia;
-    for (var i = 0; i < nao.length; i++) {
-      final n = nao[i];
-      if (n == 0) continue;
-      brutos.add(_Bruto(
-        DateTime(2026, 8, i + 1),
-        '—',
-        'Viagens não realizadas',
-        '$n viagem(ns) não realizada(s) no dia',
-        n >= 7
-            ? Gravidade.critico
-            : n >= 3
-                ? Gravidade.atencao
-                : Gravidade.baixo,
-      ));
+    for (final m in DadosService.meses) {
+      _viagens(m, m.naoRealizadas, 'Viagens não realizadas', brutos, naoRealizada: true);
+      _viagens(m, m.naoTerminadas, 'Viagem não terminada', brutos);
+      _viagens(m, m.naoIniciadas, 'Viagem não iniciada', brutos);
+      _saldos(m, brutos);
     }
-
-    final vendas = MockFinanceiro.vendasPorDia;
-    final uso = MockFinanceiro.utilizacaoPorDia;
-    for (var i = 0; i < vendas.length; i++) {
-      final saldo = vendas[i] - uso[i];
-      if (saldo >= 0) continue;
-      brutos.add(_Bruto(
-        DateTime(2026, 8, i + 1),
-        '—',
-        'Crédito circulante',
-        'Saldo diário negativo (${fmtMoney(saldo)})',
-        saldo <= -7500
-            ? Gravidade.critico
-            : saldo <= -3000
-                ? Gravidade.atencao
-                : Gravidade.baixo,
-      ));
-    }
-
-    for (final v in MockAlertas.viagensNaoIniciadas) {
-      brutos.add(_Bruto(
-        DateTime(2026, 8, v.dia),
-        v.linha,
-        'Viagem não iniciada',
-        '${v.descricao} · saída prevista ${v.horario}',
-        Gravidade.atencao,
-      ));
-    }
-
-    brutos.add(_Bruto(
-      DateTime(2026, 9, 14),
-      '—',
-      'Crédito circulante',
-      'Saldo negativo na 1ª quinzena de setembro (${fmtMoney(MockAlertas.saldoSetembroQuinzena)})',
-      Gravidade.critico,
-    ));
 
     brutos.sort((a, b) => a.data.compareTo(b.data));
 
@@ -98,5 +54,57 @@ class AlertasService {
       ));
     }
     return lista.reversed.toList(); // mais recentes primeiro
+  }
+
+  static void _viagens(
+    DadosMes m,
+    List<OcorrenciaViagem> ocorrencias,
+    String tipo,
+    List<_Bruto> saida, {
+    bool naoRealizada = false,
+  }) {
+    // agrupa por dia + linha
+    final grupos = <String, List<OcorrenciaViagem>>{};
+    for (final o in ocorrencias) {
+      grupos.putIfAbsent('${o.dia}|${o.linha}', () => []).add(o);
+    }
+    for (final g in grupos.values) {
+      final n = g.length;
+      final horarios = (g.map((o) => o.horario).toList()..sort()).join(', ');
+      final Gravidade grav;
+      if (n >= 3) {
+        grav = Gravidade.critico;
+      } else if (naoRealizada && n == 1) {
+        grav = Gravidade.baixo;
+      } else {
+        grav = Gravidade.atencao;
+      }
+      saida.add(_Bruto(
+        DateTime(2026, m.mes, g.first.dia),
+        g.first.linha,
+        tipo,
+        '$n ${n == 1 ? 'viagem' : 'viagens'} - saída prevista: $horarios',
+        grav,
+      ));
+    }
+  }
+
+  static void _saldos(DadosMes m, List<_Bruto> saida) {
+    final saldos = m.saldoPorDia;
+    for (var i = 0; i < saldos.length; i++) {
+      final s = saldos[i];
+      if (s >= 0) continue;
+      saida.add(_Bruto(
+        DateTime(2026, m.mes, m.diasFin[i]),
+        todas,
+        'Crédito circulante',
+        'Saldo diário negativo (${fmtMoney(s)})',
+        s <= -7500
+            ? Gravidade.critico
+            : s <= -3000
+                ? Gravidade.atencao
+                : Gravidade.baixo,
+      ));
+    }
   }
 }
