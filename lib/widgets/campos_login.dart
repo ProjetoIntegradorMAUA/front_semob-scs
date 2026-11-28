@@ -109,34 +109,40 @@ class CardFormulario extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final cores = context.cores;
+    final pequeno = MediaQuery.sizeOf(context).width < 500; // celular
 
-    return Center(
-      child: SingleChildScrollView(
-        padding: const EdgeInsets.all(24),
-        child: Container(
-          width: 456,
-          padding: const EdgeInsets.all(48),
-          decoration: cardDecoration(context),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Text(
-                titulo,
-                style: TextStyle(
-                  fontSize: 28,
-                  fontWeight: FontWeight.bold,
-                  color: cores.text,
-                ),
+    return SafeArea(
+      child: Center(
+        child: SingleChildScrollView(
+          padding: EdgeInsets.all(pequeno ? 16 : 24),
+          child: ConstrainedBox(
+            constraints: const BoxConstraints(maxWidth: 456),
+            child: Container(
+              width: double.infinity,
+              padding: EdgeInsets.all(pequeno ? 24 : 48),
+              decoration: cardDecoration(context),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
+                    titulo,
+                    style: TextStyle(
+                      fontSize: 28,
+                      fontWeight: FontWeight.bold,
+                      color: cores.text,
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  Text(
+                    subtitulo,
+                    style: TextStyle(fontSize: 12, color: cores.muted),
+                  ),
+                  const SizedBox(height: 32),
+                  ...filhos,
+                ],
               ),
-              const SizedBox(height: 8),
-              Text(
-                subtitulo,
-                style: TextStyle(fontSize: 12, color: cores.muted),
-              ),
-              const SizedBox(height: 32),
-              ...filhos,
-            ],
+            ),
           ),
         ),
       ),
